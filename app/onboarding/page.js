@@ -1,9 +1,9 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Select,
   MenuItem,
@@ -12,6 +12,11 @@ import {
 } from "@mui/material"
 
 export default function Onboarding() {
+  const searchParams = useSearchParams()
+  const userId = searchParams.get('userId')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -27,93 +32,172 @@ export default function Onboarding() {
 
   const router = useRouter()
     
-  const handleNext = () => {
-    router.push("/dashboard")
-  }  
+  const handleNext = async () => {
+    try {
+      setLoading(true)
+      setError("")
+
+      // Validate inputs
+      if (!formData.name || !formData.phone || !amTime.hour || !amTime.minute || !pmTime.hour || !pmTime.minute) {
+        setError("Please fill in all fields")
+        return
+      }
+
+      // Format times
+      const timeam = `${amTime.hour}:${amTime.minute}`
+      const timepm = `${pmTime.hour}:${pmTime.minute}`
+
+      const response = await fetch(`http://localhost:8000/api/users/${userId}/onboard`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          timeam: timeam,
+          timepm: timepm
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || 'Failed to update user details')
+      }
+
+      // Redirect to dashboard on success
+      router.push("/dashboard")
+    } catch (err) {
+      console.error('Error updating user details:', err)
+      setError(err.message || 'Failed to update user details')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Redirect if no userId is present
+  useEffect(() => {
+    if (!userId) {
+      router.push('/login')
+    }
+  }, [userId, router])
 
   const hourOptions = Array.from({ length: 12 }, (_, i) => i + 1)
   const minuteOptions = ["00", "15", "30", "45"]
 
+  if (!userId) {
+    return null // Don't render anything while redirecting
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen p-4 space-y-4 bg-gray-100">
-      <h1 className="text-2xl font-semibold">Onboarding</h1>
-      <p className="text-sm text-center mb-4">Welcome to the onboarding page!</p>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 space-y-4 bg-gray-100">
+      <h1 className="text-2xl font-semibold">Complete Your Profile</h1>
+      <p className="text-sm text-center mb-4">Please provide your details to continue</p>
 
-      <Input placeholder="name" name="name" onChange={handleChange} />
-      <Input placeholder="Phone" name="phone" onChange={handleChange} />
-
-      <div className="w-full">
-        <p className="font-medium mt-4 mb-2">Select AM Time</p>
-        <div className="flex gap-4">
-          <FormControl fullWidth>
-            <InputLabel>Hour</InputLabel>
-            <Select
-              value={amTime.hour}
-              label="Hour"
-              onChange={(e) => setAmTime((prev) => ({ ...prev, hour: e.target.value }))}
-            >
-              {hourOptions.map((hour) => (
-                <MenuItem key={hour} value={hour}>
-                  {hour}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <InputLabel>Minute</InputLabel>
-            <Select
-              value={amTime.minute}
-              label="Minute"
-              onChange={(e) => setAmTime((prev) => ({ ...prev, minute: e.target.value }))}
-            >
-              {minuteOptions.map((minute) => (
-                <MenuItem key={minute} value={minute}>
-                  {minute}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+      {error && (
+        <div className="w-full max-w-md p-3 text-red-500 bg-red-100 rounded">
+          {error}
         </div>
-      </div>
+      )}
 
-      <div className="w-full">
-        <p className="font-medium mt-4 mb-2">Select PM Time</p>
-        <div className="flex gap-4">
-          <FormControl fullWidth>
-            <InputLabel>Hour</InputLabel>
-            <Select
-              value={pmTime.hour}
-              label="Hour"
-              onChange={(e) => setPmTime((prev) => ({ ...prev, hour: e.target.value }))}
-            >
-              {hourOptions.map((hour) => (
-                <MenuItem key={hour} value={hour}>
-                  {hour}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+      <div className="w-full max-w-md space-y-4">
+        <Input 
+          placeholder="Name" 
+          name="name" 
+          value={formData.name}
+          onChange={handleChange}
+          disabled={loading}
+        />
+        <Input 
+          placeholder="Phone" 
+          name="phone" 
+          value={formData.phone}
+          onChange={handleChange}
+          disabled={loading}
+        />
 
-          <FormControl fullWidth>
-            <InputLabel>Minute</InputLabel>
-            <Select
-              value={pmTime.minute}
-              label="Minute"
-              onChange={(e) => setPmTime((prev) => ({ ...prev, minute: e.target.value }))}
-            >
-              {minuteOptions.map((minute) => (
-                <MenuItem key={minute} value={minute}>
-                  {minute}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <div className="w-full">
+          <p className="font-medium mt-4 mb-2">Select AM Time</p>
+          <div className="flex gap-4">
+            <FormControl fullWidth>
+              <InputLabel>Hour</InputLabel>
+              <Select
+                value={amTime.hour}
+                label="Hour"
+                onChange={(e) => setAmTime((prev) => ({ ...prev, hour: e.target.value }))}
+                disabled={loading}
+              >
+                {hourOptions.map((hour) => (
+                  <MenuItem key={hour} value={hour}>
+                    {hour}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Minute</InputLabel>
+              <Select
+                value={amTime.minute}
+                label="Minute"
+                onChange={(e) => setAmTime((prev) => ({ ...prev, minute: e.target.value }))}
+                disabled={loading}
+              >
+                {minuteOptions.map((minute) => (
+                  <MenuItem key={minute} value={minute}>
+                    {minute}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
         </div>
-      </div>
 
-      <div className="w-full flex justify-end mt-6">
-        <Button onClick={handleNext}>Next</Button>
+        <div className="w-full">
+          <p className="font-medium mt-4 mb-2">Select PM Time</p>
+          <div className="flex gap-4">
+            <FormControl fullWidth>
+              <InputLabel>Hour</InputLabel>
+              <Select
+                value={pmTime.hour}
+                label="Hour"
+                onChange={(e) => setPmTime((prev) => ({ ...prev, hour: e.target.value }))}
+                disabled={loading}
+              >
+                {hourOptions.map((hour) => (
+                  <MenuItem key={hour} value={hour}>
+                    {hour}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Minute</InputLabel>
+              <Select
+                value={pmTime.minute}
+                label="Minute"
+                onChange={(e) => setPmTime((prev) => ({ ...prev, minute: e.target.value }))}
+                disabled={loading}
+              >
+                {minuteOptions.map((minute) => (
+                  <MenuItem key={minute} value={minute}>
+                    {minute}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+        </div>
+
+        <div className="w-full flex justify-end mt-6">
+          <Button 
+            onClick={handleNext} 
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Next"}
+          </Button>
+        </div>
       </div>
     </div>
   )
