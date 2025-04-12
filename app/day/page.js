@@ -1,18 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
   Checkbox,
   FormControlLabel,
   IconButton,
-  Grid,
   Paper,
+  Collapse,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
+import MoodComponent from '../components/mood';
 
 export default function DayViewPage() {
   const searchParams = useSearchParams();
@@ -22,57 +25,138 @@ export default function DayViewPage() {
   const completedTasks = ['task 1', 'task 2', 'task 3'];
   const todoTasks = ['task 4', 'task 5'];
 
+  const [completedOpen, setCompletedOpen] = useState(false);
+  const [todoOpen, setTodoOpen] = useState(false);
+  const [moodOpen, setMoodOpen] = useState(false);
+
   const handleBack = () => {
     window.history.back();
   };
 
+  const [mood, setMood] = useState({
+    happy: 75,
+    sad: 40,
+    angry: 20,
+    calm: 90,
+  });
+
   return (
     <Box className="p-6 min-h-screen bg-gray-50">
-      <Box className="mb-6 p-4 rounded-xl bg-white shadow-md flex items-center">
+      <div className="flex items-center">
         <IconButton onClick={handleBack}>
-          <ArrowBackIcon />
+          <ArrowBackIosIcon />
         </IconButton>
-        <Typography variant="h5" fontWeight="bold" className="ml-4">
-          {todayFormatted}
-        </Typography>
-      </Box>
+        <Box className="mb-6 p-4 rounded-xl bg-white shadow-md flex items-center w-full">
+          <Typography variant="h5" fontWeight="bold" className="ml-4">
+            {todayFormatted}
+          </Typography>
+        </Box>
+      </div>
 
       <div className="mb-6 mr-6 flex">
         <div className="mr-2 w-1/2">
-          <Paper elevation={3} className="p-4 h-64 rounded-xl flex flex-col">
-            <Typography variant="h6" className="mb-2 font-semibold">Morning</Typography>
-            <Typography variant="body2" className="text-gray-600">Placeholder content</Typography>
+          <Paper
+            elevation={3}
+            className="p-4 h-64 rounded-xl flex flex-col"
+            style={{ backgroundColor: '#F99A00' }}
+          >
+            <Typography
+              variant="h6"
+              className="font-semibold text-white"
+              style={{ borderBottom: '2px solid white' }}
+            >
+              Morning
+            </Typography>
+            <Typography variant="body2" className="text-gray-600">
+              Placeholder content
+            </Typography>
           </Paper>
         </div>
         <div className="w-1/2">
-          <Paper elevation={3} className="p-4 h-64 rounded-xl flex flex-col">
-            <Typography variant="h6" className="mb-2 font-semibold">Night</Typography>
-            <Typography variant="body2" className="text-gray-600">Placeholder content</Typography>
+          <Paper
+            elevation={3}
+            className="p-4 h-64 rounded-xl flex flex-col"
+            style={{ backgroundColor: '#3BDBE3' }}
+          >
+            <Typography
+              variant="h6"
+              className="font-semibold text-white"
+              style={{ borderBottom: '2px solid white' }}
+            >
+              Night
+            </Typography>
+            <Typography variant="body2" className="text-gray-600">
+              Placeholder content
+            </Typography>
           </Paper>
         </div>
       </div>
 
+      {/* Completed tasks dropdown */}
       <Box className="mb-4">
-        <Typography variant="h6" className="mb-2 font-semibold">Completed</Typography>
-        {completedTasks.map((task, index) => (
-          <FormControlLabel
-            key={index}
-            control={<Checkbox checked disabled />}
-            label={task}
-          />
-        ))}
+        <Typography variant="h6" className="mb-2 font-semibold flex items-center">
+          <Paper
+            className="p-2 rounded-md w-full flex justify-between"
+            onClick={() => setCompletedOpen(!completedOpen)}
+          >
+            Completed
+            <IconButton size="small" className="ml-2">
+              {completedOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+            </IconButton>
+          </Paper>
+        </Typography>
+        <Collapse in={completedOpen}>
+          {completedTasks.map((task, index) => (
+            <FormControlLabel
+              key={index}
+              control={<Checkbox checked disabled />}
+              label={task}
+            />
+          ))}
+        </Collapse>
       </Box>
 
-      <Box>
-        <Typography variant="h6" className="mb-2 font-semibold">Still To-Do</Typography>
-        {todoTasks.map((task, index) => (
-          <FormControlLabel
-            key={index}
-            control={<Checkbox disabled />}
-            label={task}
-          />
-        ))}
+      {/* To-Do tasks dropdown */}
+      <Box className="mb-4">
+        <Typography variant="h6" className="mb-2 font-semibold flex items-center">
+          <Paper
+            className="p-2 rounded-md w-full flex justify-between"
+            onClick={() => setTodoOpen(!todoOpen)}
+          >
+            Still To-Do
+            <IconButton size="small" className="ml-2">
+              {todoOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+            </IconButton>
+          </Paper>
+        </Typography>
+        <Collapse in={todoOpen}>
+          {todoTasks.map((task, index) => (
+            <FormControlLabel
+              key={index}
+              control={<Checkbox disabled />}
+              label={task}
+            />
+          ))}
+        </Collapse>
       </Box>
+
+      {/* <Box>
+        <Typography variant="h6" className="mb-2 font-semibold flex items-center">
+          <Paper
+            className="p-2 rounded-md w-full flex justify-between"
+            onClick={() => setMoodOpen(!moodOpen)}
+          >
+            Mood
+            <IconButton size="small" className="ml-2">
+              {moodOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+            </IconButton>
+          </Paper>
+        </Typography>
+        <Collapse in={moodOpen}>
+            <MoodComponent mood={mood} className = "mt-10"/>
+        </Collapse>
+      </Box> */}
+      <MoodComponent mood={mood} className = "mt-10"/>
     </Box>
   );
 }
