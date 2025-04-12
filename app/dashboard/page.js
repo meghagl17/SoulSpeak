@@ -8,21 +8,18 @@ import TextField from '@mui/material/TextField'
 import { Checkbox, FormControlLabel, IconButton, createTheme, ThemeProvider, Typography } from '@mui/material'
 import { Settings } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import MoodComponent from '../components/mood';
 
 export default function Dashboard() {
   const [value, setValue] = useState(dayjs())
-  const [tasks, setTasks] = useState([
-    { id: 1, label: 'Task 1', checked: false },
-    { id: 2, label: 'Task 2', checked: false },
-    { id: 3, label: 'Task 3', checked: false },
-    { id: 4, label: 'Task 4', checked: false },
-  ]);
-
+  const [tasks, setTasks] = useState([])
+  const [mood, setMood] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const router = useRouter()
-
-  const [mood, setMood] = useState({happy: 60, sad: 20, angry: 10, calm: 80})
+  const searchParams = useSearchParams()
+  const userId = searchParams.get('userId')
 
   const handleCheckboxChange = (id) => {
     setTasks((prevTasks) =>
@@ -39,11 +36,69 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    const link = document.createElement("link")
-    link.href = "https://fonts.googleapis.com/css2?family=Loved+by+the+King&display=swap"
-    link.rel = "stylesheet"
-    document.head.appendChild(link)
-  }, [])
+    if (!userId) {
+      router.push('/login')
+      return
+    }
+
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true)
+
+        const tasksResponse = await fetch(`http://localhost:8000/api/tasks?userId=${userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+
+        // Fetch mood for current date
+        const moodResponse = await fetch(`http://localhost:8000/api/mood?userId=${userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+
+        if (!tasksResponse.ok || !moodResponse.ok) {
+          throw new Error('Failed to fetch dashboard data')
+        }
+
+        const tasksData = await tasksResponse.json()
+        const moodData = await moodResponse.json()
+
+        setTasks(tasksData)
+        setMood(moodData)
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err)
+        setError('Failed to load dashboard data')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [userId, router])
+
+  if (!userId) {
+    return null // Don't render anything while redirecting
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-500">{error}</div>
+      </div>
+    )
+  }
 
   const theme = createTheme({
     typography: {
