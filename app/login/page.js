@@ -23,7 +23,7 @@ const GoogleLogin = () => {
     setIsLoading(true);
     setError("");
     try {
-      window.location.href = "http://localhost:8000/auth/google";
+      window.location.href = "https://daily-buddy-mu.vercel.app/";
     } catch (err) {
       console.error("Login error:", err);
       setError("Failed to login with Google. Please try again.");
