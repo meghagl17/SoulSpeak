@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import { Checkbox, FormControlLabel, IconButton, createTheme, ThemeProvider, Typography } from '@mui/material'
 import { Settings } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import MoodComponent from '../components/mood';
 
 export default function Dashboard() {
@@ -18,8 +18,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const userId = searchParams.get('userId')
 
   const handleCheckboxChange = (id) => {
     setTasks((prevTasks) =>
@@ -36,60 +34,58 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
+    // Simple authentication check
+    const userId = localStorage.getItem('userId');
     if (!userId) {
-      router.push('/login')
-      return
+      router.push('/login');
+      return;
     }
 
+    // Fetch dashboard data
     const fetchDashboardData = async () => {
       try {
-        setLoading(true)
+        const currentDate = dayjs().format('YYYY-MM-DD');
 
-        const tasksResponse = await fetch(`http://localhost:8000/api/tasks?userId=${userId}`, {
+        const tasksResponse = await fetch(`http://localhost:8000/api/tasks?userId=${userId}&date=${currentDate}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           }
-        })
+        });
 
-        // Fetch mood for current date
-        const moodResponse = await fetch(`http://localhost:8000/api/mood?userId=${userId}`, {
+        const moodResponse = await fetch(`http://localhost:8000/api/mood?userId=${userId}&date=${currentDate}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           }
-        })
+        });
 
         if (!tasksResponse.ok || !moodResponse.ok) {
-          throw new Error('Failed to fetch dashboard data')
+          throw new Error('Failed to fetch dashboard data');
         }
 
-        const tasksData = await tasksResponse.json()
-        const moodData = await moodResponse.json()
+        const tasksData = await tasksResponse.json();
+        const moodData = await moodResponse.json();
 
-        setTasks(tasksData)
-        setMood(moodData)
+        setTasks(tasksData);
+        setMood(moodData);
+        setLoading(false);
       } catch (err) {
-        console.error('Error fetching dashboard data:', err)
-        setError('Failed to load dashboard data')
-      } finally {
-        setLoading(false)
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to load dashboard data');
+        setLoading(false);
       }
-    }
+    };
 
-    fetchDashboardData()
-  }, [userId, router])
-
-  if (!userId) {
-    return null // Don't render anything while redirecting
-  }
+    fetchDashboardData();
+  }, [router]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading...</div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -97,7 +93,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-red-500">{error}</div>
       </div>
-    )
+    );
   }
 
   const theme = createTheme({
@@ -156,11 +152,11 @@ export default function Dashboard() {
                 key={task.id}
                 control={
                 <Checkbox
-                    checked={task.checked}
+                    checked={task.completed}
                     onChange={() => handleCheckboxChange(task.id)}
                 />
                 }
-                label={task.label}
+                label={task.description}
             />
             ))}
         </div>

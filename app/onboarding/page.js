@@ -65,6 +65,9 @@ export default function Onboarding() {
         throw new Error(errorData.detail || 'Failed to update user details')
       }
 
+      // Store userId in localStorage before redirecting
+      localStorage.setItem('userId', userId)
+      
       // Redirect to dashboard on success
       router.push("/dashboard")
     } catch (err) {

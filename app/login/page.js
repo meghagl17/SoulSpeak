@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -10,35 +9,26 @@ const GoogleLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   
-  // Check for user parameter from backend callback
   useEffect(() => {
-    const user = searchParams.get("user");
-    if (user) {
-      // User has been authenticated via backend
-      // You could store user info in localStorage or context
-      localStorage.setItem("user", user);
-      router.push("/"); // Redirect to home page
+    // Check if we have userId in URL (from backend callback)
+    const userId = searchParams.get("userId");
+    if (userId) {
+      // Store userId in localStorage
+      localStorage.setItem("userId", userId);
+      router.push("/dashboard");
     }
   }, [searchParams, router]);
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setIsLoading(true);
     setError("");
-    
     try {
-      // Instead of using NextAuth's signIn, we'll redirect to our backend
       window.location.href = "http://localhost:8000/auth/google";
     } catch (err) {
       console.error("Login error:", err);
       setError("Failed to login with Google. Please try again.");
-    } finally {
       setIsLoading(false);
     }
-  };
-
-  // Handle direct NextAuth login if needed
-  const handleNextAuthGoogleLogin = () => {
-    signIn("google", { callbackUrl: `/` });
   };
 
   return (
