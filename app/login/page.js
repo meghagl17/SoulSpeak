@@ -2,8 +2,17 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 
-const GoogleLogin = () => {
+export default function GoogleLogin() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPage />
+    </Suspense>
+  );
+}
+
+function LoginPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -54,4 +63,4 @@ const GoogleLogin = () => {
   );
 };
 
-export default GoogleLogin;
+// export default GoogleLogin;

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import {
   Box,
   Typography,
@@ -18,6 +19,14 @@ import { useSearchParams } from 'next/navigation';
 import MoodComponent from '../components/mood';
 
 export default function DayViewPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DayView />
+    </Suspense>
+  );
+}
+
+function DayView() {
   const searchParams = useSearchParams();
   const date = searchParams.get('date');
   const todayFormatted = dayjs(date).format('MMMM D, YYYY');
@@ -27,17 +36,26 @@ export default function DayViewPage() {
 
   const [completedOpen, setCompletedOpen] = useState(false);
   const [todoOpen, setTodoOpen] = useState(false);
-  const [moodOpen, setMoodOpen] = useState(false);
+  // const [moodOpen, setMoodOpen] = useState(false);
 
   const handleBack = () => {
     window.history.back();
   };
 
+  useEffect(() => {
+    setMood({
+      happy: 75,
+      sad: 40,
+      angry: 20,
+      calm: 90,
+    });
+  }, []);
+
   const [mood, setMood] = useState({
-    happy: 75,
-    sad: 40,
-    angry: 20,
-    calm: 90,
+    happy: 0,
+    sad: 0,
+    angry: 0,
+    calm: 0,
   });
 
   return (
