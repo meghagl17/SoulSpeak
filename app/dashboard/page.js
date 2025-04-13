@@ -22,7 +22,7 @@ import { Settings, Add } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import MoodComponent from '../components/mood';
-import { userInfo } from 'os'
+// import { userInfo } from 'os'
 
 export default function Dashboard() {
   const [value, setValue] = useState(dayjs())
@@ -252,7 +252,7 @@ export default function Dashboard() {
       <div className="mt-8 flex gap-6">
         <div className="w-1/2 bg-[#3BDBE3] rounded-xl shadow-md p-4">
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-lg font-semibold">Today's Tasks</h3>
+              <h3 className="text-lg font-semibold">Todays Tasks</h3>
               <IconButton onClick={handleAddTaskClick} size="small">
                 <Add />
               </IconButton>

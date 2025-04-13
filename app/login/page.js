@@ -33,7 +33,7 @@ function LoginPage() {
     setIsLoading(true);
     setError("");
     try {
-      window.location.href = "https://capable-stace-alb123-fd82ce46.koyeb.app/auth/google";
+      window.location.href = "http://localhost:8000/auth/google/";
     } catch (err) {
       console.error("Login error:", err);
       setError("Failed to login with Google. Please try again.");
