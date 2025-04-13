@@ -296,6 +296,19 @@ export default function Dashboard() {
         </LocalizationProvider>
       </div>
 
+      <Button 
+        variant="contained" 
+        color="primary"
+        onClick={() => {
+          const today = dayjs();
+          const formatted = today.format('YYYY-MM-DD');
+          router.push(`/day?date=${formatted}`);
+        }}
+        sx={{ mt: 2 }}
+      >
+        View Today
+      </Button>
+
       <div className="mt-8 flex gap-6">
         <div className="w-1/2 bg-[#3BDBE3] rounded-xl shadow-md p-4">
             <div className="flex justify-between items-center mb-2">
