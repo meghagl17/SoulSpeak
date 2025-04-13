@@ -27,7 +27,7 @@ export default function Home() {
           </p>
           <Link href="/information">
             <div className="px-6 py-2 bg-[#F98500] text-white text-sm font-semibold rounded-full hover:bg-[#e97e00] transition">
-              Let's Go!
+              Let&apos;s Go!
               <ArrowRightAltIcon/>
             </div>
           </Link>
