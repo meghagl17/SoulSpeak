@@ -92,9 +92,11 @@ export default function Dashboard() {
   };
 
   const handleDateChange = (newValue) => {
-    setValue(newValue)
+    // Always navigate to day view regardless of whether date changed
     const formatted = newValue.format('YYYY-MM-DD');
     router.push(`/day?date=${formatted}`);
+    // Update state after navigation to avoid any potential issues
+    setValue(newValue);
   }
   
   const handleAddTaskClick = () => {
