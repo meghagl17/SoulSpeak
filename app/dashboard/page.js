@@ -103,6 +103,12 @@ export default function Dashboard() {
                 <Checkbox
                     checked={task.checked}
                     onChange={() => handleCheckboxChange(task.id)}
+                    sx={{
+                      color: '#F99A00',
+                      '&.Mui-checked': {
+                        color: '#F99A00',
+                      },
+                    }}
                 />
                 }
                 label={task.label}

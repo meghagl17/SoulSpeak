@@ -42,12 +42,12 @@ export default function DayViewPage() {
 
   return (
     <Box className="p-6 min-h-screen bg-gray-50">
-      <div className="flex items-center">
+      <div className="flex items-center mb-6 gap-2">
         <IconButton onClick={handleBack}>
           <ArrowBackIosIcon />
         </IconButton>
-        <Box className="mb-6 p-4 rounded-xl bg-white shadow-md flex items-center w-full">
-          <Typography variant="h5" fontWeight="bold" className="ml-4">
+        <Box className="p-4 rounded-xl bg-white shadow-md flex-1">
+          <Typography variant="h5" fontWeight="bold" className="londrina">
             {todayFormatted}
           </Typography>
         </Box>
@@ -58,17 +58,15 @@ export default function DayViewPage() {
           <Paper
             elevation={3}
             className="p-4 h-64 rounded-xl flex flex-col"
-            style={{ backgroundColor: '#F99A00' }}
-          >
+            style={{ backgroundColor: '#F99A00' }}>
             <Typography
               variant="h6"
               className="font-semibold text-white"
-              style={{ borderBottom: '2px solid white' }}
-            >
+              style={{ borderBottom: '2px solid white', marginBottom: '8px'}}>
               Morning
             </Typography>
-            <Typography variant="body2" className="text-gray-600">
-              Placeholder content
+            <Typography variant="body2" className="text-gray-600 annie text-white">
+              My day was good, i worked on the project for cruzhacks. Went to the dining hall.
             </Typography>
           </Paper>
         </div>
@@ -76,17 +74,15 @@ export default function DayViewPage() {
           <Paper
             elevation={3}
             className="p-4 h-64 rounded-xl flex flex-col"
-            style={{ backgroundColor: '#3BDBE3' }}
-          >
+            style={{ backgroundColor: '#3BDBE3' }}>
             <Typography
               variant="h6"
               className="font-semibold text-white"
-              style={{ borderBottom: '2px solid white' }}
-            >
+              style={{ borderBottom: '2px solid white', marginBottom: '8px' }}>
               Night
             </Typography>
-            <Typography variant="body2" className="text-gray-600">
-              Placeholder content
+            <Typography variant="body2" className="text-gray-600 annie">
+              My day was good, i worked on the project for cruzhacks. Went to the dining hall.
             </Typography>
           </Paper>
         </div>
@@ -96,10 +92,10 @@ export default function DayViewPage() {
       <Box className="mb-4">
         <Typography variant="h6" className="mb-2 font-semibold flex items-center">
           <Paper
-            className="p-2 rounded-md w-full flex justify-between"
+            className="p-2 rounded-md w-full flex justify-between londrina"
             onClick={() => setCompletedOpen(!completedOpen)}
           >
-            Completed
+            Completed Tasks
             <IconButton size="small" className="ml-2">
               {completedOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
             </IconButton>
@@ -110,7 +106,7 @@ export default function DayViewPage() {
             <FormControlLabel
               key={index}
               control={<Checkbox checked disabled />}
-              label={task}
+              label={<span className="loved">{task}</span>}
             />
           ))}
         </Collapse>
@@ -120,10 +116,10 @@ export default function DayViewPage() {
       <Box className="mb-4">
         <Typography variant="h6" className="mb-2 font-semibold flex items-center">
           <Paper
-            className="p-2 rounded-md w-full flex justify-between"
+            className="p-2 rounded-md w-full flex justify-between londrina"
             onClick={() => setTodoOpen(!todoOpen)}
           >
-            Still To-Do
+            Incomplete Tasks
             <IconButton size="small" className="ml-2">
               {todoOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
             </IconButton>
@@ -134,7 +130,7 @@ export default function DayViewPage() {
             <FormControlLabel
               key={index}
               control={<Checkbox disabled />}
-              label={task}
+              label={<span className="loved">{task}</span>}
             />
           ))}
         </Collapse>
@@ -157,6 +153,38 @@ export default function DayViewPage() {
         </Collapse>
       </Box> */}
       <MoodComponent mood={mood} className = "mt-10"/>
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&display=swap');
+      
+        .annie {
+          font-family: 'Annie Use Your Telescope', cursive;
+          font-size: 1rem;
+          text-color: white;
+        }
+
+      `}</style>
+
+  <style jsx global>{`
+    @import url('https://fonts.googleapis.com/css2?family=Loved+by+the+King&display=swap');
+  
+    .loved {
+      font-family: 'Loved by the King', cursive;
+      color: #F99A00;
+      font-size: 1.5rem;
+    }
+  `}</style>
+
+<style jsx global>{`
+    @import url('https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap');
+  
+    .londrina {
+      font-family: 'Londrina Solid', cursive;
+      color: #1D5C5F;
+      font-size: 1.5rem;
+    }
+  `}</style>
+  
     </Box>
   );
 }

@@ -2,40 +2,48 @@
 
 import { useRouter } from "next/navigation"
 import { ArrowDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 export default function WorkflowPage() {
-    const router = useRouter()
-    
-    const handleNext = () => {
-        router.push("/onboarding")
-    }
+  const router = useRouter()
+
+  const handleNext = () => {
+    router.push("/onboarding")
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-100">
-      <h1 className="text-2xl font-bold mb-8">App Workflow</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen px-6 py-10 bg-gradient-to-br from-[#38EDFA] to-[#1E9BA2]">
+      <h1 className="text-4xl font-bold text-[#1D5C5F] mb-12 font-[Quicksand]">
+        Welcome to Vocalogue!
+      </h1>
 
       <div className="flex flex-col items-center space-y-6 mb-10">
-        <Box content="Step 1: User signs up and creates profile" />
-        <ArrowDown className="text-gray-500" />
-        <Box content="Step 2: User selects preferences and interests" />
-        <ArrowDown className="text-gray-500" />
-        <Box content="Step 3: Algorithm generates book recommendations" />
-        <ArrowDown className="text-gray-500" />
-        <Box content="Step 4: User joins discussions and engages with community" />
+        <StepBox content=" Sign up and create your profile" />
+        <AnimatedArrow />
+        <StepBox content="Select your preferred times to call" />
+        <AnimatedArrow />
+        <StepBox content="Get scheduled calls and journal with your AI buddy" />
+        <AnimatedArrow />
+        <StepBox content="View your day summary, mood trends, and more!" />
       </div>
 
-      <Button onClick={handleNext}>
+      <button
+        onClick={handleNext}
+        className="mt-4 px-6 py-3 bg-[#1D5C5F] text-white rounded-full shadow-lg hover:bg-[#EA9408] transition-all duration-200 active:scale-95"
+      >
         Next
-      </Button>
+      </button>
     </div>
   )
 }
 
-function Box({ content }) {
-  return (
-    <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md text-center">
-      <p className="text-sm text-gray-700">{content}</p>
-    </div>
-  )
-}
+// Cute step card
+const StepBox = ({ content }) => (
+  <div className="bg-white p-4 rounded-2xl shadow-md w-72 text-center border border-pink-200">
+    <p className="text-[#FF9900] font-medium">{content}</p>
+  </div>
+)
+
+// Animated arrow
+const AnimatedArrow = () => (
+  <ArrowDown className="text-[#1D5C5F] animate-bounce" />
+)
