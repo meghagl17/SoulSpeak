@@ -144,7 +144,7 @@ export default function Dashboard() {
 
       <div className="mt-8 flex gap-6">
         <div className="w-1/2 bg-[#3BDBE3] rounded-xl shadow-md p-4">
-            <h3 className="text-lg font-semibold">Today's Tasks</h3>
+            <h3 className="text-lg font-semibold">Todays Tasks</h3>
             <div className="h-0.5 bg-white w-full mb-4"></div>
             {tasks.map((task) => (
             <FormControlLabel
