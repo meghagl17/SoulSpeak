@@ -40,7 +40,6 @@ export default function Dashboard() {
       router.push('/login');
       return;
     }
-
     // Fetch dashboard data
     const fetchDashboardData = async () => {
       try {
