@@ -2,8 +2,17 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 
-const GoogleLogin = () => {
+export default function GoogleLogin() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPage />
+    </Suspense>
+  );
+}
+
+function LoginPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +33,7 @@ const GoogleLogin = () => {
     setIsLoading(true);
     setError("");
     try {
-      window.location.href = "http://localhost:8000/auth/google";
+      window.location.href = "https://capable-stace-alb123-fd82ce46.koyeb.app/auth/google";
     } catch (err) {
       console.error("Login error:", err);
       setError("Failed to login with Google. Please try again.");
@@ -55,4 +64,4 @@ const GoogleLogin = () => {
   );
 };
 
-export default GoogleLogin;
+// export default GoogleLogin;

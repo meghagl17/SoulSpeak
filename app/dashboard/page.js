@@ -257,6 +257,7 @@ export default function Dashboard() {
                 <Add />
               </IconButton>
             </div>
+
             <div className="h-0.5 bg-white w-full mb-4"></div>
             {tasks.length > 0 ? (
               tasks.map((task) => (

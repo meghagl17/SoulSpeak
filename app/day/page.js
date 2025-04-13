@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
+import { Suspense } from 'react';
+=import {
   Box,
   Typography,
   Checkbox,
@@ -220,6 +221,14 @@ class DailyBuddyAPI {
 }
 
 export default function DayViewPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DayView />
+    </Suspense>
+  );
+}
+
+function DayView() {
   const searchParams = useSearchParams();
   const date = searchParams.get('date') || dayjs().format('YYYY-MM-DD');
   const todayFormatted = dayjs(date).format('MMMM D, YYYY');
@@ -244,6 +253,7 @@ export default function DayViewPage() {
   // UI states
   const [completedOpen, setCompletedOpen] = useState(false);
   const [todoOpen, setTodoOpen] = useState(false);
+
   const [moodOpen, setMoodOpen] = useState(false);
   
   // Dialog states
@@ -444,6 +454,27 @@ export default function DayViewPage() {
   // Get completed and todo tasks
   const completedTasks = tasks.filter(task => task.completed);
   const todoTasks = tasks.filter(task => !task.completed);
+  // const [moodOpen, setMoodOpen] = useState(false);
+
+//   const handleBack = () => {
+//     window.history.back();
+//   };
+
+//   useEffect(() => {
+//     setMood({
+//       happy: 75,
+//       sad: 40,
+//       angry: 20,
+//       calm: 90,
+//     });
+//   }, []);
+
+//   const [mood, setMood] = useState({
+//     happy: 0,
+//     sad: 0,
+//     angry: 0,
+//     calm: 0,
+//   });
 
   return (
     <Box className="p-6 min-h-screen bg-gray-50">

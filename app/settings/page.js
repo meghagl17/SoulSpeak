@@ -22,12 +22,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 
+const initialForm = { name: "", phone: "" };
+const initialAm = { hour: "", minute: "" };
+const initialPm = { hour: "", minute: "" };
+
 export default function SettingsPage() {
   const router = useRouter();
-
-  const initialForm = { name: "", phone: "" };
-  const initialAm = { hour: "", minute: "" };
-  const initialPm = { hour: "", minute: "" };
 
   const [formData, setFormData] = useState(initialForm);
   const [amTime, setAmTime] = useState(initialAm);

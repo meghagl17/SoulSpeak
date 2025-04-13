@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import {
   Select,
   MenuItem,
@@ -12,6 +12,14 @@ import {
 } from "@mui/material"
 
 export default function Onboarding() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <OnboardingPage />
+    </Suspense>
+  );
+}
+
+function OnboardingPage() {
   const searchParams = useSearchParams()
   const userId = searchParams.get('userId')
   const [loading, setLoading] = useState(false)
