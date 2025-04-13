@@ -14,7 +14,7 @@ export default function WorkflowPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 py-10 bg-gradient-to-br from-[#E0FBFC] via-[#C2F0F2] to-[#A0E7EC]">
       <h1 className="text-3xl sm:text-4xl font-bold text-[#164C4F] mb-12 font-[Quicksand] text-center">
-        Welcome to <span className="text-[#F98500]">Vocalogue!</span>
+        Welcome to <span className="text-[#F98500]">SoulSpeak!</span>
       </h1>
 
       <div className="flex flex-col items-center space-y-8 mb-12 w-full max-w-md">

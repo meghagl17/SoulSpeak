@@ -231,7 +231,7 @@ export default function Dashboard() {
     <div className="p-6 min-h-screen bg-gray-50">
       <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md mb-6">
       <Typography variant="h5" className="londrina">
-        Hello ! Welcome to Journal Me !
+        Hello! Megha!
       </Typography>
         <IconButton onClick={() => router.push('/settings')}>
           <Settings fontSize="large" />
