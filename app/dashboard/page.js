@@ -20,6 +20,8 @@ import {
   CircularProgress,
   Box
 } from '@mui/material'
+import CallIcon from "@mui/icons-material/Call";
+
 import { Settings, Add } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -141,6 +143,47 @@ export default function Dashboard() {
       console.error('Error creating task:', error);
     }
   };
+
+  const callUser = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        console.error("User ID not found");
+        return;
+      }
+  
+      // const response = await fetch("https://capable-stace-alb123-fd82ce46.koyeb.app/make_call", {
+      //   method: "POST",
+      //   // headers: {
+      //   //   "Content-Type": "application/json",
+      //   // },
+      //   body: JSON.stringify({ user_id: userId }),
+      // });
+
+      fetch(`https://capable-stace-alb123-fd82ce46.koyeb.app/make_call?user_id=${userId}`, {
+        method: "POST",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Call response:", data);
+        })
+        .catch((error) => {
+          console.error("Error making call:", error);
+        });
+  
+      // if (!response.ok) {
+      //   const errorData = await response.json(); // This might have more info on the 422
+      //   console.error('Failed to initiate call:', errorData);
+      //   return;
+      // }
+  
+      // const data = await response.json();
+      // console.log('Call initiated:', data);
+    } catch (error) {
+      console.error('Error initiating call:', error);
+    }
+  };
+  
 
   useEffect(() => {
     // Simple authentication check
@@ -294,7 +337,7 @@ export default function Dashboard() {
 
       <div className="bg-white rounded-xl shadow-md p-1 text-center h-32 flex items-center justify-center">
         <div className="bg-[#F99A00] rounded-xl shadow-md p-2 text-center flex items-center justify-center loved">
-          <span className="text-white">you got this! Good luck!</span>
+          <span className="text-white">You got this! Good luck!</span>
         </div>
       </div>
     </div>
@@ -321,6 +364,27 @@ export default function Dashboard() {
       </Dialog>
     </div>
 
+    <Box
+      sx={{
+        position: "fixed",
+        right: 16,
+        bottom: 16,
+        zIndex: 1000,
+      }}
+    >
+      <IconButton
+    onClick={callUser}
+    sx={{
+      backgroundColor: "#3BDBE3",
+      color: "#fff",
+      boxShadow: 3,
+    }}
+  >
+        <CallIcon />
+      </IconButton>
+    </Box>
+    
+    {/* <button onClick={callUser}>call</button> */}
 
     <style jsx global>{`
     @import url('https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap');
