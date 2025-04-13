@@ -78,18 +78,35 @@ export default function Onboarding() {
     }
   }
 
-  // Redirect if no userId is present
+  // Check if user should see this page
   useEffect(() => {
-    if (!userId) {
-      router.push('/login')
+    // Check if we're in the browser
+    if (typeof window !== 'undefined') {
+      // If userId exists in localStorage, user has already completed onboarding
+      const storedUserId = localStorage.getItem('userId');
+      if (storedUserId) {
+        router.push('/dashboard');
+        return;
+      }
+      
+      // If no userId in URL, redirect to login
+      if (!userId) {
+        router.push('/login');
+      }
     }
-  }, [userId, router])
+  }, [userId, router]);
 
   const hourOptions = Array.from({ length: 12 }, (_, i) => i + 1)
   const minuteOptions = ["00", "15", "30", "45"]
 
+  // Don't render anything while redirecting
+  if (typeof window !== 'undefined' && localStorage.getItem('userId')) {
+    return null; 
+  }
+
+  // Don't render if no userId in URL
   if (!userId) {
-    return null // Don't render anything while redirecting
+    return null;
   }
 
   return (

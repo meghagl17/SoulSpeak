@@ -15,6 +15,7 @@ const GoogleLogin = () => {
     if (userId) {
       // Store userId in localStorage
       localStorage.setItem("userId", userId);
+      // Skip onboarding and redirect directly to dashboard
       router.push("/dashboard");
     }
   }, [searchParams, router]);
