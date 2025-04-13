@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import {
   Box,
   Typography,
@@ -219,13 +219,14 @@ class DailyBuddyAPI {
   }
 }
 
-export default function DayViewPage() {
+// Create a component that uses useSearchParams
+function DayViewContent() {
   const searchParams = useSearchParams();
   const date = searchParams.get('date') || dayjs().format('YYYY-MM-DD');
   const todayFormatted = dayjs(date).format('MMMM D, YYYY');
   
-  // API client
-  const api = new DailyBuddyAPI();
+  // API client wrapped in useMemo to avoid recreating on every render
+  const api = useMemo(() => new DailyBuddyAPI(), []);
   
   // States for data
   const [summaries, setSummaries] = useState({
@@ -259,14 +260,7 @@ export default function DayViewPage() {
   const [editingMood, setEditingMood] = useState(null);
   
   // Fetch data on component mount
-  useEffect(() => {
-    fetchSummaries();
-    fetchTasks();
-    fetchMood();
-  }, [date]);
-  
-  // API call functions
-  const fetchSummaries = async () => {
+  const fetchSummaries = useCallback(async () => {
     try {
       const data = await api.get_summary(date);
       const morningEntry = data.find(entry => entry.am_pm === true);
@@ -279,18 +273,18 @@ export default function DayViewPage() {
     } catch (error) {
       console.error('Error fetching summaries:', error);
     }
-  };
+  }, [date, api]);
   
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const data = await api.get_tasks(date);
       setTasks(data);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
-  };
+  }, [date, api]);
   
-  const fetchMood = async () => {
+  const fetchMood = useCallback(async () => {
     try {
       const data = await api.get_mood(date);
       if (data) {
@@ -304,7 +298,13 @@ export default function DayViewPage() {
     } catch (error) {
       console.error('Error fetching mood:', error);
     }
-  };
+  }, [date, api]);
+  
+  useEffect(() => {
+    fetchSummaries();
+    fetchTasks();
+    fetchMood();
+  }, [fetchSummaries, fetchTasks, fetchMood]);
   
   // Handler functions
   const handleBack = () => {
@@ -742,6 +742,15 @@ export default function DayViewPage() {
         }
       `}</style>
     </Box>
+  );
+}
+
+// Main component that uses Suspense
+export default function DayViewPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DayViewContent />
+    </Suspense>
   );
 }
 

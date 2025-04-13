@@ -1,11 +1,21 @@
-// "use client";
+"use client";
 
 // import { useEffect } from 'react';
 // import { useRouter } from 'next/navigation';
 // import { useAuth } from '../../lib/AuthContext';
 // import AuthStatusWrapper from '../components/AuthStatusWrapper';
 
-// export default function ProtectedPage() {
+export default function ProtectedPage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-6">Protected Page</h1>
+        <p className="mb-6">This page is currently under development.</p>
+      </div>
+    </div>
+  );
+}
+
 //   const { isAuthenticated, isLoading } = useAuth();
 //   const router = useRouter();
 

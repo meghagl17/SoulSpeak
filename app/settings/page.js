@@ -16,7 +16,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PersonIcon from '@mui/icons-material/Person';
@@ -25,9 +25,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 export default function SettingsPage() {
   const router = useRouter();
 
-  const initialForm = { name: "", phone: "" };
-  const initialAm = { hour: "", minute: "" };
-  const initialPm = { hour: "", minute: "" };
+  const initialForm = useMemo(() => ({ name: "", phone: "" }), []);
+  const initialAm = useMemo(() => ({ hour: "", minute: "" }), []);
+  const initialPm = useMemo(() => ({ hour: "", minute: "" }), []);
 
   const [formData, setFormData] = useState(initialForm);
   const [amTime, setAmTime] = useState(initialAm);
@@ -40,20 +40,7 @@ export default function SettingsPage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("success");
 
-  useEffect(() => {
-    // Check authentication
-    if (typeof window !== 'undefined') {
-      const storedUserId = localStorage.getItem('userId');
-      if (!storedUserId) {
-        router.push('/login');
-        return;
-      }
-      setUserId(storedUserId);
-      fetchUserDetails(storedUserId);
-    }
-  }, [router]);
-
-  const fetchUserDetails = async (id) => {
+  const fetchUserDetails = useCallback(async (id) => {
     try {
       setLoading(true);
       const response = await fetch(`http://localhost:8000/api/users/${id}`);
@@ -94,7 +81,20 @@ export default function SettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // Check authentication
+    if (typeof window !== 'undefined') {
+      const storedUserId = localStorage.getItem('userId');
+      if (!storedUserId) {
+        router.push('/login');
+        return;
+      }
+      setUserId(storedUserId);
+      fetchUserDetails(storedUserId);
+    }
+  }, [router, fetchUserDetails]);
 
   const saveChanges = async () => {
     if (!userId) return;
@@ -167,7 +167,7 @@ export default function SettingsPage() {
       pmTime.minute !== initialPm.minute;
       
     setHasChanged(hasFormChanged || hasAmChanged || hasPmChanged);
-  }, [formData, amTime, pmTime, loading]);
+  }, [formData, amTime, pmTime, loading, initialForm, initialAm, initialPm]);
 
   if (loading) {
     return (
