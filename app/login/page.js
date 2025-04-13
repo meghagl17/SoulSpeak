@@ -45,7 +45,7 @@ function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#F98500] to-[#EA7400] p-6">
       <div className="text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-semibold text-white mb-4">Welcome to Vocalogue!</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold text-white mb-4">Welcome to SoulSpeak!</h1>
         <p className="text-white text-lg">Please login to continue</p>
       </div>
 

@@ -20,7 +20,7 @@ export default function Home() {
       <div className="absolute top-[70vh] left-0 w-full z-10">
         <div className="bg-white rounded-t-3xl px-6 py-6 shadow-2xl h-[30vh] flex flex-col items-center text-center">
           <h1 className="text-3xl font-extrabold mb-2 text-gray-800">
-            Daily Buddy
+            SoulSpeak
           </h1>
           <p className="text-gray-500 mb-4 text-sm">
             Your companion for mindful mornings, productive days, and peaceful nights.
