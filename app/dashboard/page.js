@@ -16,7 +16,9 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  CircularProgress,
+  Box
 } from '@mui/material'
 import { Settings, Add } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
@@ -188,9 +190,9 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
-      </div>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress sx={{ color: '#F99A00' }} />
+      </Box>
     );
   }
 

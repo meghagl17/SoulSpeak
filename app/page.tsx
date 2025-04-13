@@ -1,23 +1,34 @@
-// import Image from "next/image";
-import Link from 'next/link';
-import AuthStatusWrapper from './components/AuthStatusWrapper';
+import Image from "next/image";
+import Link from "next/link";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6">Welcome to Daily Buddy</h1>
-        <AuthStatusWrapper />
-        <p className="mt-4 text-lg">This is a simple Next.js application.</p>
-        <div className="mt-6 space-y-3">
-          <Link href="/login">
-            <div className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center">
-              Get Started!
-            </div>
-          </Link>
-          <Link href="/protected">
-            <div className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-center block mt-3">
-              View Protected Page
+    <main className="relative min-h-screen bg-white">
+      {/* Background image taking up ~75% of screen */}
+      <div className="relative w-full h-[75vh] overflow-hidden">
+        <Image
+          src="/logo.jpeg"
+          alt="Logo"
+          fill
+          priority
+          className="object-cover rounded-b-3xl"
+        />
+      </div>
+
+      {/* White section overlapping and going to bottom */}
+      <div className="absolute top-[70vh] left-0 w-full z-10">
+        <div className="bg-white rounded-t-3xl px-6 py-6 shadow-2xl h-[30vh] flex flex-col items-center text-center">
+          <h1 className="text-3xl font-extrabold mb-2 text-gray-800">
+            Daily Buddy
+          </h1>
+          <p className="text-gray-500 mb-4 text-sm">
+            Your companion for mindful mornings, productive days, and peaceful nights.
+          </p>
+          <Link href="/information">
+            <div className="px-6 py-2 bg-[#F98500] text-white text-sm font-semibold rounded-full hover:bg-[#e97e00] transition">
+              Let's Go!
+              <ArrowRightAltIcon/>
             </div>
           </Link>
         </div>
