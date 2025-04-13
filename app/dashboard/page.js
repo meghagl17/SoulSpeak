@@ -5,11 +5,24 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
 import TextField from '@mui/material/TextField'
-import { Checkbox, FormControlLabel, IconButton, createTheme, ThemeProvider, Typography } from '@mui/material'
-import { Settings } from '@mui/icons-material'
+import { 
+  Checkbox, 
+  FormControlLabel, 
+  IconButton, 
+  createTheme, 
+  ThemeProvider, 
+  Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from '@mui/material'
+import { Settings, Add } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import MoodComponent from '../components/mood';
+import { userInfo } from 'os'
 
 export default function Dashboard() {
   const [value, setValue] = useState(dayjs())
@@ -18,13 +31,60 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const router = useRouter()
+  
+  // Task dialog state
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false)
+  const [newTaskDescription, setNewTaskDescription] = useState("")
 
-  const handleCheckboxChange = (id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, checked: !task.checked } : task
-      )
-    );
+  const handleCheckboxChange = async (id) => {
+    try {
+      // Find the task
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+      
+      // Toggle completed status in UI immediately for responsive feel
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, completed: !task.completed } : task
+        )
+      );
+      
+      // Get user ID from localStorage
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        console.error("User ID not found");
+        return;
+      }
+      
+      // Call API to update task status
+      const response = await fetch(`http://localhost:8000/api/tasks/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          completed: !task.completed
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+        // If update fails, revert the UI change
+        setTasks((prevTasks) =>
+          prevTasks.map((t) =>
+            t.id === id ? { ...t, completed: task.completed } : t
+          )
+        );
+      }
+      
+      // Successfully updated task in backend
+      const updatedTask = await response.json();
+      console.log('Task updated:', updatedTask);
+      
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
   const handleDateChange = (newValue) => {
@@ -32,6 +92,53 @@ export default function Dashboard() {
     const formatted = newValue.format('YYYY-MM-DD');
     router.push(`/day?date=${formatted}`);
   }
+  
+  const handleAddTaskClick = () => {
+    setNewTaskDescription("");
+    setTaskDialogOpen(true);
+  };
+  
+  const handleTaskDialogClose = () => {
+    setTaskDialogOpen(false);
+  };
+  
+  const handleAddTask = async () => {
+    if (!newTaskDescription.trim()) return;
+    
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        console.error("User ID not found");
+        return;
+      }
+      
+      const currentDate = dayjs().format('YYYY-MM-DD');
+      
+      const response = await fetch('http://localhost:8000/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          date: currentDate,
+          description: newTaskDescription,
+          completed: false
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create task');
+      }
+      
+      const newTask = await response.json();
+      setTasks([...tasks, newTask]);
+      setTaskDialogOpen(false);
+      
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
+  };
 
   useEffect(() => {
     // Simple authentication check
@@ -122,7 +229,7 @@ export default function Dashboard() {
     <div className="p-6 min-h-screen bg-gray-50">
       <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md mb-6">
       <Typography variant="h5" className="londrina">
-        Hello, User
+        Hello ! Welcome to Journal Me !
       </Typography>
         <IconButton onClick={() => router.push('/settings')}>
           <Settings fontSize="large" />
@@ -144,26 +251,36 @@ export default function Dashboard() {
 
       <div className="mt-8 flex gap-6">
         <div className="w-1/2 bg-[#3BDBE3] rounded-xl shadow-md p-4">
-            <h3 className="text-lg font-semibold">Todays Tasks</h3>
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-lg font-semibold">Today's Tasks</h3>
+              <IconButton onClick={handleAddTaskClick} size="small">
+                <Add />
+              </IconButton>
+            </div>
+
             <div className="h-0.5 bg-white w-full mb-4"></div>
-            {tasks.map((task) => (
-            <FormControlLabel
-                key={task.id}
-                control={
-                <Checkbox
-                    checked={task.completed}
-                    onChange={() => handleCheckboxChange(task.id)}
-                    sx={{
-                      color: '#F99A00',
-                      '&.Mui-checked': {
-                        color: '#F99A00',
-                      },
-                    }}
+            {tasks.length > 0 ? (
+              tasks.map((task) => (
+                <FormControlLabel
+                    key={task.id}
+                    control={
+                    <Checkbox
+                        checked={task.completed}
+                        onChange={() => handleCheckboxChange(task.id)}
+                        sx={{
+                          color: '#F99A00',
+                          '&.Mui-checked': {
+                            color: '#F99A00',
+                          },
+                        }}
+                    />
+                    }
+                    label={task.description}
                 />
-                }
-                label={task.description}
-            />
-            ))}
+              ))
+            ) : (
+              <div className="text-center py-4 text-gray-500">No tasks for today</div>
+            )}
         </div>
 
         <div className="flex flex-col gap-4 w-1/2">
@@ -180,6 +297,26 @@ export default function Dashboard() {
       </div>
     </div>
       </div>
+      
+      {/* Add Task Dialog */}
+      <Dialog open={taskDialogOpen} onClose={handleTaskDialogClose}>
+        <DialogTitle>Add New Task</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Task Description"
+            type="text"
+            fullWidth
+            value={newTaskDescription}
+            onChange={(e) => setNewTaskDescription(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleTaskDialogClose}>Cancel</Button>
+          <Button onClick={handleAddTask} color="primary">Add</Button>
+        </DialogActions>
+      </Dialog>
     </div>
 
 
