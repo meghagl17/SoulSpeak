@@ -20,6 +20,8 @@ import {
   CircularProgress,
   Box
 } from '@mui/material'
+import CallIcon from "@mui/icons-material/Call";
+
 import { Settings, Add } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -142,32 +144,46 @@ export default function Dashboard() {
     }
   };
 
-  const calluser = async () => {
+  const callUser = async () => {
     try {
       const userId = localStorage.getItem('userId');
       if (!userId) {
         console.error("User ID not found");
         return;
       }
+  
+      // const response = await fetch("https://capable-stace-alb123-fd82ce46.koyeb.app/make_call", {
+      //   method: "POST",
+      //   // headers: {
+      //   //   "Content-Type": "application/json",
+      //   // },
+      //   body: JSON.stringify({ user_id: userId }),
+      // });
 
-      const response = await fetch(`http://localhost:8000/make_call`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'userId': userId,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to initiate call');
-      }
-
-      const data = await response.json();
-      console.log('Call initiated:', data);
+      fetch(`https://capable-stace-alb123-fd82ce46.koyeb.app/make_call?user_id=${userId}`, {
+        method: "POST",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Call response:", data);
+        })
+        .catch((error) => {
+          console.error("Error making call:", error);
+        });
+  
+      // if (!response.ok) {
+      //   const errorData = await response.json(); // This might have more info on the 422
+      //   console.error('Failed to initiate call:', errorData);
+      //   return;
+      // }
+  
+      // const data = await response.json();
+      // console.log('Call initiated:', data);
     } catch (error) {
       console.error('Error initiating call:', error);
     }
-  }
+  };
+  
 
   useEffect(() => {
     // Simple authentication check
@@ -347,8 +363,28 @@ export default function Dashboard() {
         </DialogActions>
       </Dialog>
     </div>
+
+    <Box
+      sx={{
+        position: "fixed",
+        right: 16,
+        bottom: 16,
+        zIndex: 1000,
+      }}
+    >
+      <IconButton
+    onClick={callUser}
+    sx={{
+      backgroundColor: "#3BDBE3",
+      color: "#fff",
+      boxShadow: 3,
+    }}
+  >
+        <CallIcon />
+      </IconButton>
+    </Box>
     
-    <button onClick={calluser}>call</button>
+    {/* <button onClick={callUser}>call</button> */}
 
     <style jsx global>{`
     @import url('https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap');
