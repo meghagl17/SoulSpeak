@@ -142,6 +142,33 @@ export default function Dashboard() {
     }
   };
 
+  const calluser = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        console.error("User ID not found");
+        return;
+      }
+
+      const response = await fetch(`http://localhost:8000/make_call`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'userId': userId,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to initiate call');
+      }
+
+      const data = await response.json();
+      console.log('Call initiated:', data);
+    } catch (error) {
+      console.error('Error initiating call:', error);
+    }
+  }
+
   useEffect(() => {
     // Simple authentication check
     const userId = localStorage.getItem('userId');
@@ -294,7 +321,7 @@ export default function Dashboard() {
 
       <div className="bg-white rounded-xl shadow-md p-1 text-center h-32 flex items-center justify-center">
         <div className="bg-[#F99A00] rounded-xl shadow-md p-2 text-center flex items-center justify-center loved">
-          <span className="text-white">you got this! Good luck!</span>
+          <span className="text-white">You got this! Good luck!</span>
         </div>
       </div>
     </div>
@@ -320,7 +347,8 @@ export default function Dashboard() {
         </DialogActions>
       </Dialog>
     </div>
-
+    
+    <button onClick={calluser}>call</button>
 
     <style jsx global>{`
     @import url('https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap');
