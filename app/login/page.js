@@ -32,7 +32,7 @@ function LoginPage() {
     setIsLoading(true);
     setError("");
     try {
-      window.location.href = "https://daily-buddy-mu.vercel.app/";
+      window.location.href = "https://capable-stace-alb123-fd82ce46.koyeb.app/";
     } catch (err) {
       console.error("Login error:", err);
       setError("Failed to login with Google. Please try again.");
